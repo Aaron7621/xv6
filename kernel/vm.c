@@ -97,8 +97,10 @@ walkaddr(pagetable_t pagetable, uint64 va)
   pte_t *pte;
   uint64 pa;
 
-  if(va >= MAXVA)
-    return 0;
+  if(va >= MAXVA){
+//      printf("out of MAXVA\n");
+      return 0;
+  }
 
   pte = walk(pagetable, va, 0);
   if(pte == 0)
