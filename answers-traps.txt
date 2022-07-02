@@ -1,0 +1,4 @@
+1. a0, a1, a2. a2 contains 13 in main's call to printf
+2. call to f for main: li a1, 12. call to g: line 14-1a.
+3. 0x97+1560=1711=0x6af
+4. 0x97
