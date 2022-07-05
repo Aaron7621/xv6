@@ -67,6 +67,30 @@ usertrap(void)
     syscall();
   } else if((which_dev = devintr()) != 0){
     // ok
+  } else if(r_scause() == 15 || r_scause() == 13){
+      uint64 va = r_stval();
+
+      uint64 sp = p->trapframe->sp;
+      uint64 user_stack_bottom = PGROUNDUP(sp);
+
+      if(va > p->sz || va < user_stack_bottom) {
+          p->killed = 1;
+          exit(-1);
+      }
+
+//      printf("page fault at %p\n", va);
+      va = PGROUNDDOWN(va);
+
+      uint64 pa = (uint64) kalloc();
+      if(pa == 0){
+          p->killed = 1;
+      } else{
+          memset((void *) pa, 0, PGSIZE);
+          if(mappages(p->pagetable, va, PGSIZE, pa, PTE_W|PTE_X|PTE_R|PTE_U) != 0){
+              kfree((void *)pa);
+              p->killed = 1;
+          }
+      }
   } else {
     printf("usertrap(): unexpected scause %p pid=%d\n", r_scause(), p->pid);
     printf("            sepc=%p stval=%p\n", r_sepc(), r_stval());
@@ -137,8 +161,8 @@ kerneltrap()
   uint64 sepc = r_sepc();
   uint64 sstatus = r_sstatus();
   uint64 scause = r_scause();
-  
-  if((sstatus & SSTATUS_SPP) == 0)
+
+    if((sstatus & SSTATUS_SPP) == 0)
     panic("kerneltrap: not from supervisor mode");
   if(intr_get() != 0)
     panic("kerneltrap: interrupts enabled");
@@ -148,6 +172,32 @@ kerneltrap()
     printf("sepc=%p stval=%p\n", r_sepc(), r_stval());
     panic("kerneltrap");
   }
+//  if(scause == 15 || scause == 13){
+//      uint64 va = r_stval();
+//      struct proc* p = myproc();
+//
+//      if(va > p->sz) {
+//          p->killed = 1;
+//          exit(-1);
+//      }
+//
+////      printf("page fault at %p\n", va);
+//      va = PGROUNDDOWN(va);
+//
+//      uint64 pa = (uint64) kalloc();
+//      if(pa == 0){
+//          p->killed = 1;
+//      } else{
+//          memset((void *) pa, 0, PGSIZE);
+//          if(mappages(p->pagetable, va, PGSIZE, pa, PTE_W|PTE_X|PTE_R|PTE_U) != 0){
+//              kfree((void *)pa);
+//              p->killed = 1;
+//          }
+//      }
+//  }
+//
+//  if(myproc()->killed)
+//      exit(-1);
 
   // give up the CPU if this is a timer interrupt.
   if(which_dev == 2 && myproc() != 0 && myproc()->state == RUNNING)
