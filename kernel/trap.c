@@ -14,6 +14,9 @@ extern char trampoline[], uservec[], userret[];
 // in kernelvec.S, calls kerneltrap().
 void kernelvec();
 
+int cowcheck(uint64 va);
+
+
 extern int devintr();
 
 void
@@ -67,12 +70,54 @@ usertrap(void)
     syscall();
   } else if((which_dev = devintr()) != 0){
     // ok
+  } else if ((r_scause() == 13 || r_scause() == 15) && cowcheck(r_stval())) {
+    uint64 va = r_stval();
+    printf("COW page fault %p\n", va);
+
+    pte_t *pte = walk(p -> pagetable, va, 1);
+    if (pte == 0)
+    {
+        printf("falied to get PTE of COW's va, or page fault happened in a not COW page\n");
+        p -> killed = 1;
+        goto kill_p;
+    }
+
+
+    char *ka = kalloc();
+    if (ka == 0)
+    {
+        printf("failed to allocate page for COW's va\n");
+        p -> killed = 1;
+        goto kill_p;
+    }
+
+    // copy the original page's content
+    uint64 ppa = PTE2PA(*pte);
+    memmove(ka, (char *)ppa, PGSIZE);
+
+    // get the original pte's flag and modify the W bit
+    uint flags = PTE_FLAGS(*pte);
+    flags |= PTE_W;
+    *pte = 0;
+//      uvmunmap(p -> pagetable, PGROUNDDOWN(va), 1, 0);
+//      printf("pte in trap: %p\n", *pte);
+    // modify the pte referring to newly allocated pa
+    if(mappages(p ->pagetable, va, 1, (uint64)ka, flags) != 0){
+      kfree(ka);
+      goto kill_p;
+    }
+
+    // drop the page if its reference is less than or equal to 1
+    kfree((void*)ppa);
+    decre_pa_ref(ppa);
+
   } else {
     printf("usertrap(): unexpected scause %p pid=%d\n", r_scause(), p->pid);
     printf("            sepc=%p stval=%p\n", r_sepc(), r_stval());
     p->killed = 1;
   }
 
+  kill_p:
   if(p->killed)
     exit(-1);
 
@@ -218,3 +263,38 @@ devintr()
   }
 }
 
+int
+cowcheck(uint64 va)
+{
+    struct proc *p = myproc();
+    pte_t *pte = walk(p -> pagetable, va, 1);
+    return va < p -> sz
+            && *pte & PTE_COW;
+}
+
+//int cowmake(uint64 va)
+//{
+//    printf("COW make %p\n", va);
+//    pte_t *pte = walk(p -> pagetable, va, 1);
+//
+//    char *ka = kalloc();
+//    if (ka == 0)
+//    {
+//        printf("failed to allocate page for COW's va\n");
+//        return 1;
+//    }
+//
+//    // copy the original page's content
+//    uint64 ppa = PTE2PA(*pte);
+//    memmove(ka, (char *)ppa, PGSIZE);
+//
+//    // get the original pte's flag and modify the W bit
+//    uint flags = PTE_FLAGS(*pte);
+//    flags |= PTE_W;
+//    // modify the pte referring to newly allocated pa
+//    if(mappages(p ->pagetable, va, 1, (uint64)ka, flags) != 0){
+//        kfree(ka);
+//        return 1;
+//    }
+//    return 0;
+//}
