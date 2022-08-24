@@ -63,6 +63,9 @@ void            ramdiskrw(struct buf*);
 void*           kalloc(void);
 void            kfree(void *);
 void            kinit(void);
+void            decre_pa_ref(uint64);
+void            incre_pa_red(uint64);
+int             get_pa_ref(uint64);
 
 // log.c
 void            initlog(int, struct superblock*);
@@ -145,6 +148,8 @@ void            trapinit(void);
 void            trapinithart(void);
 extern struct spinlock tickslock;
 void            usertrapret(void);
+//int             cowcheck(uint);
+//int             cowmake(uint);
 
 // uart.c
 void            uartinit(void);
@@ -168,6 +173,7 @@ void            uvmfree(pagetable_t, uint64);
 void            uvmunmap(pagetable_t, uint64, uint64, int);
 void            uvmclear(pagetable_t, uint64);
 uint64          walkaddr(pagetable_t, uint64);
+pte_t *         walk(pagetable_t pagetable, uint64 va, int alloc);
 int             copyout(pagetable_t, uint64, char *, uint64);
 int             copyin(pagetable_t, char *, uint64, uint64);
 int             copyinstr(pagetable_t, char *, uint64, uint64);

@@ -5,6 +5,8 @@
 #include "riscv.h"
 #include "defs.h"
 #include "fs.h"
+//#include "spinlock.h"
+//#include "proc.h"
 
 /*
  * the kernel's page table.
@@ -14,6 +16,9 @@ pagetable_t kernel_pagetable;
 extern char etext[];  // kernel.ld sets this to end of kernel code.
 
 extern char trampoline[]; // trampoline.S
+
+extern int cowcheck(uint64 va);
+extern int cowmake(uint64 va);
 
 /*
  * create a direct-map page table for the kernel.
@@ -151,13 +156,19 @@ mappages(pagetable_t pagetable, uint64 va, uint64 size, uint64 pa, int perm)
   uint64 a, last;
   pte_t *pte;
 
+//    printf("mappages: %p\n", va);
   a = PGROUNDDOWN(va);
   last = PGROUNDDOWN(va + size - 1);
+//    printf("a = %p \t last = %p \t va = %p\n", a, last, va);
   for(;;){
     if((pte = walk(pagetable, a, 1)) == 0)
       return -1;
-    if(*pte & PTE_V)
-      panic("remap");
+    if(*pte & PTE_V) {
+        printf("pte: %p\n", *pte);
+        panic("remap");
+
+    }
+//        *pte = 0;
     *pte = PA2PTE(pa) | perm | PTE_V;
     if(a == last)
       break;
@@ -311,22 +322,29 @@ uvmcopy(pagetable_t old, pagetable_t new, uint64 sz)
   pte_t *pte;
   uint64 pa, i;
   uint flags;
-  char *mem;
 
   for(i = 0; i < sz; i += PGSIZE){
     if((pte = walk(old, i, 0)) == 0)
       panic("uvmcopy: pte should exist");
     if((*pte & PTE_V) == 0)
       panic("uvmcopy: page not present");
+
+    *pte &= ~PTE_W;
+    *pte |= PTE_COW;
     pa = PTE2PA(*pte);
     flags = PTE_FLAGS(*pte);
-    if((mem = kalloc()) == 0)
-      goto err;
-    memmove(mem, (char*)pa, PGSIZE);
-    if(mappages(new, i, PGSIZE, (uint64)mem, flags) != 0){
-      kfree(mem);
-      goto err;
+//    if((mem = kalloc()) == 0)
+//      goto err;
+//    memmove(mem, (char*)pa, PGSIZE);
+//    if(mappages(new, i, PGSIZE, (uint64)mem, flags) != 0){
+//      kfree(mem);
+//      goto err;
+//    }
+    if (mappages(new, i, PGSIZE, pa, flags) != 0)
+    {
+        goto err;
     }
+    incre_pa_red((uint64)pa);
   }
   return 0;
 
@@ -355,9 +373,17 @@ int
 copyout(pagetable_t pagetable, uint64 dstva, char *src, uint64 len)
 {
   uint64 n, va0, pa0;
+  if (cowcheck(dstva))
+  {
+      if (cowmake(dstva) != 0) return -1;
+  }
 
   while(len > 0){
     va0 = PGROUNDDOWN(dstva);
+
+    // cow page here
+
+
     pa0 = walkaddr(pagetable, va0);
     if(pa0 == 0)
       return -1;
