@@ -44,3 +44,11 @@
 ![避免内存泄漏示意](D:\GitHubLocalRepository\xv6\note\picture\避免内存泄漏示意.png)
 
 ​	所以在需要边界区域，一定要保证操作的原子性，加锁不能分开加。
+
+
+
+## MultiThread Lab
+
+### Uthread
+
+- 初始化的时候，thread context的sp应该指向thread -> stack数组的尾，也就是thread -> stack + STACK_SIZE
