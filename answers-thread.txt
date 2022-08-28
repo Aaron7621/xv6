@@ -1,0 +1,12 @@
+The k-v pair inserts into the hashmap bucket by adding its *entry before the head of the bucket's linkedlist.
+
+If two or more threads put entries, noted as e1, e2, in the same bucket (i.e. linkedlist) together, e1 -> next and e2 -> next may both point to the head of their bucket's linkedlist.
+
+Then the new head of the linkedlist may become e1 or e2. Let's say e1. If that happens, e2 will not be reached by the linkedlist anymore. Cause there's no nodes points to e2. We can never access to it.
+
+In this way, the list will become like this:
+
+e1 -> e3 -> e4 -> NULL
+       ^
+       |
+      e2
