@@ -51,4 +51,4 @@
 
 ### Uthread
 
-- 初始化的时候，thread context的sp应该指向thread -> stack数组的尾，也就是thread -> stack + STACK_SIZE
+- 初始化的时候，thread context的sp应该指向thread -> stack数组的尾，也就是thread -> stack + STACK_SIZE。因为RISCV的函数调用/栈使用惯例就是栈从高地址往低地址扩展。栈底在栈的最高地址
