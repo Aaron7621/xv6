@@ -52,3 +52,25 @@
 ### Uthread
 
 - 初始化的时候，thread context的sp应该指向thread -> stack数组的尾，也就是thread -> stack + STACK_SIZE。因为RISCV的函数调用/栈使用惯例就是栈从高地址往低地址扩展。栈底在栈的最高地址
+
+
+
+## Locks Lab
+
+### Memory Allocator
+
+- 在kinit调用时只有一个cpu会进来，kinit和freerange的执行不需要担心多线程的问题
+
+### Block Cache 
+
+- 直接在binit里面kerneltrap了。原因是本来给每个哈希桶（链表）数组的头节点都存的是头节点的指针，初始化之后指针是0，不能直接对这这个指针进行p -> next。相当于空指针异常。但是xv6不会报详细的错误，只会trap掉
+
+- 往hashmap的头节点.next写没数据。忽略了一点：结构体整个赋值是拷贝，而不是引用
+
+  ![image-20220829214720984](C:\Users\Aaron\AppData\Roaming\Typora\typora-user-images\image-20220829214720984.png)
+
+  这样写的话bcache[0].next是不会有变化的
+
+- usertests的时候显示“freeing free block"：可能是桶锁在查找LRU和驱逐之间经历了释放
+
+  解决：后来切到实验原分支lock下跑usertests也出现了freeing free block的报错。再切了几次不同分支之后突然就正常了。。。然后切回实验8分支make clean后再跑就过了。比较迷
