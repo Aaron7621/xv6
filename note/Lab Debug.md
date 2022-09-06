@@ -74,3 +74,16 @@
 - usertests的时候显示“freeing free block"：可能是桶锁在查找LRU和驱逐之间经历了释放
 
   解决：后来切到实验原分支lock下跑usertests也出现了freeing free block的报错。再切了几次不同分支之后突然就正常了。。。然后切回实验8分支make clean后再跑就过了。比较迷
+
+
+
+## file system lab
+
+### Large files
+
+- 通过bigfile但是usertests直接panic: virtio_disk_intr status。网上查的原因是要把NDIRECT改成11才行。。。但是hint和逻辑上应该没有强制才对，很迷，可能是virtio驱动里面的bug
+
+### Symbolic link
+
+- 一直在sys_syslink处panic，原因是误把用户层系统传进来的路径的字符串地址当成用户空间的地址了，实际上该字符串通过argstr已经来到了内核定义的字符串数组中，所以此时把这个数组写到inode里面，usr_src为0
+- acquire panic，可能在什么地方出现了死锁。但是之后很多次都过了，无法复现

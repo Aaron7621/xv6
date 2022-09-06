@@ -15,3 +15,15 @@
 为什么要进程和uart两把锁：
 
 1. uart的锁充当了condition lock的作用。更大的原因感觉在于在中断发生的时候，中断处理函数是没有办法获得等待中断时的进程的上下文的
+
+
+
+为什么在bmap的时候不需要对inode的东西（inode的blockno数组也可能被修改过）进行log_writes？
+因为写文件的时候，writei最终会调用iupdate。而写过程中所有的bmap中调用的log_write和iupdate都是包在一个事务中的
+
+
+
+搞清楚inode里面nlink和ref的区别。
+
+- nlink是文件在磁盘中的链接数。即当前文件”存在于“多少个文件夹中。如果这个数为0则可以直接删掉这个文件相关的所有东西了
+- ref文件inode的引用数。相当于此inode正在被多少个进程”使用中“。如果为0则可以此inode cache可能/可以在下次ialloc时被驱逐
