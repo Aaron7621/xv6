@@ -15,23 +15,15 @@ main(int argc, char* argv[])
         exit(1);
     }
 
-
-//    for (int i = 2; i < argc; ++i) {
-//        printf("%s\n", argv[i]);
-//    }
-
     char buf[512];
     char *p = buf;
     char *q = buf;
 //  exec per line and per \n
     while(read(0, buf, sizeof(buf)) > 0){
         char *exec_argv[MAXARG];
-//        memcpy(exec_argv, argv+2, argc-2);
         for (int i = 0; i < argc - 1; ++i) {
             exec_argv[i] = argv[i+1];
-//            printf("ea = %s\n", exec_argv[i]);
         }
-//        printf("buf = %s\n", buf);
         int len = strlen(buf);
         for(;p < buf + len; p++){
 //            printf("p=%c\n", *p);
@@ -49,12 +41,6 @@ main(int argc, char* argv[])
                 }
             }
         }
-//        printf("")
-
-
-
-
-//        printf("%s", buf);
     }
     exit(0);
 }
