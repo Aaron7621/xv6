@@ -18,18 +18,16 @@ main(int argc, char* argv[])
     char buf[512];
     char *p = buf;
     char *q = buf;
-//  exec per line and per \n
     while(read(0, buf, sizeof(buf)) > 0){
         char *exec_argv[MAXARG];
         for (int i = 0; i < argc - 1; ++i) {
             exec_argv[i] = argv[i+1];
         }
         int len = strlen(buf);
+        //  exec per line and by \n
         for(;p < buf + len; p++){
-//            printf("p=%c\n", *p);
             if (*p=='\n'){
                 *p = 0;
-//                printf("q=%s\n",q);
                 exec_argv[argc-1] = q;
 //                printf("in for: %s\n", exec_argv[argc-2]);
                 q = p + 1;
