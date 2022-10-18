@@ -13,19 +13,18 @@ char *target;
 void
 find_name(char *path)
 {
-//    printf("enter in the func\n");
     char buf[512], *p, *q;
     int fd;
     struct dirent de;
     struct stat st;
 
     if((fd = open(path, 0)) < 0){
-        fprintf(2, "ls: cannot open %s\n", path);
+        fprintf(2, "find: cannot open %s\n", path);
         return;
     }
 
     if(fstat(fd, &st) < 0){
-        fprintf(2, "ls: cannot stat %s\n", path);
+        fprintf(2, "find: cannot stat %s\n", path);
         close(fd);
         return;
     }
