@@ -175,7 +175,7 @@ ifeq ($(LAB),util)
 	UEXTRA += user/xargstest.sh
 endif
 
-fs.img: mkfs/mkfs README $(UEXTRA) $(UPROGS)
+fs.img: mkfs/mkfs README.md $(UEXTRA) $(UPROGS)
 	mkfs/mkfs fs.img README $(UEXTRA) $(UPROGS)
 
 -include kernel/*.d user/*.d
