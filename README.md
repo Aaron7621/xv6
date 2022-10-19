@@ -1,7 +1,5 @@
 # Lab1
 
-## Link
-https://pdos.csail.mit.edu/6.S081/2020/labs/util.html
 
 ## Target
 - Boot the XV6
@@ -10,7 +8,6 @@ https://pdos.csail.mit.edu/6.S081/2020/labs/util.html
 - Calculate primes by a concurrent algorithm. Implemented by using multi-process and pipe() system call.
 - System call implementation: find()
 - Implement the xargs
-
 
 
 ## Explanation
