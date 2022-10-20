@@ -1,4 +1,7 @@
+# 分模块核心代码详解 | Core code explanation
+
 # 简介 Introduction
+
 本文件记录了本人对XV6各模块核心代码的解释、理解。
 英文版正在路上...
 This file records my comprehension and explanation to the core logics of different modules in XV6.

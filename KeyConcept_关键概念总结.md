@@ -1,6 +1,16 @@
+# Key concept conclusion| 核心概念总结
+
+This file concludes the key concepts in XV6 and operating system. It is important to be familiar with these concept before exploring in the source code in XV6.
+
+The English version is coming soon...
+
+本文包含XV6和操作系统的核心概念及解释。理解这些核心理论知识对阅读、理解、开发XV6源码至关重要。
+
+英文翻译版本正在路上...
+
 ## 页表、地址转换、PTE格式
 
-![SV39](D:\GitHubLocalRepository\xv6\note\picture\SV39.png)
+![SV39](OtherNote\picture\SV39.png)
 
 
 
@@ -57,11 +67,11 @@ uservec的特殊性：硬件在陷入期间不会切换页表，所以uservec需
 
 ### 通用寄存器
 
-![RISCV_Register](D:\GitHubLocalRepository\xv6\note\picture\RISCV_Register.png)
+![RISCV_Register](OtherNote\picture\RISCV_Register.png)
 
 ### scause
 
-![scause](D:\GitHubLocalRepository\xv6\note\picture\scause.png)
+![scause](OtherNote\picture\scause.png)
 
 
 
@@ -195,7 +205,7 @@ UNIX： pthread_cond_wait(&cond, &mutex)
 
 所以从文件系统看磁盘，可以直接看成一个巨大的block数组，从0开始增长到磁盘最后，block的布局如下：
 
-![blocklayout](D:\GitHubLocalRepository\xv6\note\picture\blocklayout.png)
+![blocklayout](OtherNote\picture\blocklayout.png)
 
 - block0要么没有用，要么被用作boot sector来启动操作系统。
 
@@ -258,7 +268,7 @@ $$
 
 ## 日志结构
 
-![log_layout](D:\MyWorkBench\xv6\note\picture\log_layout.png)
+![log_layout](OtherNote\picture\log_layout.png)
 
 文件系统中为日志定义了若干个block。
 
