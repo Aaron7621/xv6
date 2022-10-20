@@ -146,16 +146,9 @@ backtrace(void)
 //    int count = 0;
 //    printf("top = %x\n", stack_frame_top);
     while(current_fp < stack_frame_top) {
-//        uint64 ra = *((uint64 *)current_fp - 8);
         uint64 ra = *(uint64*)(current_fp - 8);
         printf("%p\n", ra);
-//        printf("fp = %x\n", current_fp);
-//        current_fp = *((uint64 *)current_fp - 16);
         current_fp = *(uint64*)(current_fp - 16);
-//        if(count ++ > 10){
-//            printf("count = %d", count);
-//            break;
-//        }
     }
     return 0;
 }
