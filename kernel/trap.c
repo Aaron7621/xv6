@@ -71,9 +71,9 @@ usertrap(void)
       uint64 va = r_stval();
 
       uint64 sp = p->trapframe->sp;
-      uint64 user_stack_bottom = PGROUNDUP(sp);
+      uint64 user_stack_up = PGROUNDUP(sp);
 
-      if(va > p->sz || va < user_stack_bottom) {
+      if(va > p->sz || va < user_stack_up) {
           p->killed = 1;
           exit(-1);
       }
