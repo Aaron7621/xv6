@@ -37,11 +37,11 @@
 
   错误加锁导致内存泄漏，控制流示意图：
 
-![内存泄漏示意](D:\GitHubLocalRepository\xv6\note\picture\内存泄漏示意.png)
+![内存泄漏示意](picture\内存泄漏示意.png)
 
 ​	正确加锁控制流：
 
-![避免内存泄漏示意](D:\GitHubLocalRepository\xv6\note\picture\避免内存泄漏示意.png)
+![避免内存泄漏示意](picture\避免内存泄漏示意.png)
 
 ​	所以在需要边界区域，一定要保证操作的原子性，加锁不能分开加。
 
