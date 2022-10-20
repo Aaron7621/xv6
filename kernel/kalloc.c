@@ -123,14 +123,10 @@ int get_pa_ref(uint64 pa)
 void *
 get_pa_decre_ref(void *pa)
 {
-//    int n = get_pa_ref((uint64) pa);
     acquire(&pgreflock);
 
     if (pa_ref[PG_IDX((uint64)pa)] <= 1)
-    if (n <= 1)
     {
-
-
         release(&pgreflock);
         return pa;
     }

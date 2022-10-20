@@ -243,9 +243,7 @@ cowcheck(uint64 va)
 
 int cowmake(uint64 va)
 {
-//    uint64 va = r_stval();
     struct proc *p = myproc();
-//    printf("COW page fault %p\n", va);
 
     pte_t *pte = walk(p -> pagetable, va, 1);
     if (pte == 0)
