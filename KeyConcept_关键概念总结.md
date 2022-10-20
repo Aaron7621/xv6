@@ -67,11 +67,11 @@ uservec的特殊性：硬件在陷入期间不会切换页表，所以uservec需
 
 ### 通用寄存器
 
-![RISCV_Register](OtherNote\picture\RISCV_Register.png)
+![RISCV_Register](OtherNote/picture/RISCV_Register.png)
 
 ### scause
 
-![scause](OtherNote\picture\scause.png)
+![scause](OtherNote/picture/scause.png)
 
 
 
@@ -205,7 +205,7 @@ UNIX： pthread_cond_wait(&cond, &mutex)
 
 所以从文件系统看磁盘，可以直接看成一个巨大的block数组，从0开始增长到磁盘最后，block的布局如下：
 
-![blocklayout](OtherNote\picture\blocklayout.png)
+![blocklayout](OtherNote/picture/blocklayout.png)
 
 - block0要么没有用，要么被用作boot sector来启动操作系统。
 
@@ -268,7 +268,7 @@ $$
 
 ## 日志结构
 
-![log_layout](OtherNote\picture\log_layout.png)
+![log_layout](OtherNote/picture/log_layout.png)
 
 文件系统中为日志定义了若干个block。
 
