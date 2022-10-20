@@ -32,3 +32,9 @@ While to implement, there are some other details have to pay attention.
 - When release a user space, we will finally call the kfree() function to free a page. So in COW mode, we need to decrease its counter first. If the counter is equal to 0 after decrement, we can safely give that page a real freedom by adding it into the freelist. If not, we don't need to do anything.
 - Some adaptation should be done in copyout() too. If the destination address in user space is a COW page, we need to do the same as what we do when encountering a COW page fault.
 - Almost there. We have to apply a lock to the reference counter array. Otherwise, when the multicore computer parallelly modify the count in this array, something incorrect may happen.
+
+
+
+## Enlightenment
+
+Although we haven't reach the lock chapter at this moment. But this lab is critical to properly locking reference counter array. Otherwise, when the array is manipulated by multiple threads, incorrect lock or no lock will result in incorrect page references read, and some pages will never be released, resulting in memory leaks.
