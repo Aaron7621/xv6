@@ -274,9 +274,8 @@ growproc(int n)
         return -1;
     }
   } else if(n < 0){
-
     sz = uvmdealloc(p->pagetable, sz, sz + n);
-      process_kvmdealloc(p->kernel_pagetable, oldsz, oldsz + n);
+    process_kvmdealloc(p->kernel_pagetable, oldsz, oldsz + n);
   }
 
     if(sz > PLIC){

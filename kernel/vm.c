@@ -488,7 +488,6 @@ copy_uvm_to_kernel_pgtbl(pagetable_t old, pagetable_t new, uint64 sz)
     pte_t *pte;
     uint64 pa, i;
     uint flags;
-//    char *mem;
 
     for(i = 0; i < sz; i += PGSIZE){
         if((pte = walk(old, i, 0)) == 0)
@@ -497,12 +496,7 @@ copy_uvm_to_kernel_pgtbl(pagetable_t old, pagetable_t new, uint64 sz)
             panic("uvmcopy: page not present");
         pa = PTE2PA(*pte);
         flags = PTE_FLAGS(*pte);
-//        printf("flags1 = %p\n", flags);
         flags = flags & ~PTE_U;
-//        printf("flags2 = %p\n", flags);
-//        if((mem = kalloc()) == 0)
-//            goto err;
-//        memmove(mem, (char*)pa, PGSIZE);
         if(mappages(new, i, PGSIZE, pa, flags) != 0){
 //            kfree(mem);
             goto err;
