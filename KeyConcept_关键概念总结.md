@@ -10,7 +10,7 @@ The English version is coming soon...
 
 ## 页表、地址转换、PTE格式
 
-![SV39](OtherNote\picture\SV39.png)
+![SV39](OtherNote/picture/SV39.png)
 
 
 
