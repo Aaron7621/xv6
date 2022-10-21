@@ -25,6 +25,8 @@ The English version will be coming soon...
 
 *但是没有找到内核第一次返回用户空间时具体发生在哪。在main()执行完userinit()，初始化了第一个进程后，main()最后调用了scheduler，scheduler中调了swtch.S进行任务切换。但是swtch.S中并没有sret*
 
+*回答：在”线程切换“部分，才能找到这个问题的真正解答*
+
 
 
 # 内存
