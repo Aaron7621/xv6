@@ -21,7 +21,7 @@ The English version will be coming soon...
 4. 各模块初始化完毕后，main()调用userinit()初始化第一个程序。userinit()实际执行了数组initcode中的二进制指令，对应user/initcode.S中的代码，其执行了一个exec系统调用，exec了init用户程序。init通过fork+exec启动shell。
 5. shell：父进程一直等待，如果子进程退出，父进程重启shell。
 
-*疑问：在trap初始化时是吧kernelvec写进stvec，作为陷入的入口。而把uservec写入stvec的操作发生在usertrapret中。在内核启动、第一次返回用户空间的时候应该会调用usertrapret才对，不然怎么调用sret返回、以及怎么写好uservec以供后面用户程序系统调用呢？*
+*疑问：在trap初始化时是把kernelvec写进stvec，作为陷入的入口。而把uservec写入stvec的操作发生在usertrapret中。在内核启动、第一次返回用户空间的时候应该会调用usertrapret才对，不然怎么调用sret返回、以及怎么写好uservec以供后面用户程序系统调用呢？*
 
 *但是没有找到内核第一次返回用户空间时具体发生在哪。在main()执行完userinit()，初始化了第一个进程后，main()最后调用了scheduler，scheduler中调了swtch.S进行任务切换。但是swtch.S中并没有sret*
 
@@ -123,7 +123,7 @@ c. 调用sret返回sepc的地址，恢复陷入前的特权级。
 ## user/usys.pl  &  user/usys.S
 
 1. usys.pl是一个生成usys.S的脚本
-2. usys.S中定义了用户层面的系统调用接口（函数），所有系统调用都只做两件事
+2. usys.S中定义了**用户层面**的系统调用接口（函数），所有系统调用都只做两件事
    1. 把当前对应的系统调用号写入a7寄存器中
    2. 调用ecall
 
@@ -134,7 +134,7 @@ c. 调用sret返回sepc的地址，恢复陷入前的特权级。
 3. 同理，syscall.c中的获取用户实参的函数argraw()，也是根据p -> trapframe中保存的a0、a1获得用户系统调用的传入参数。
 
 *疑问：在uservec中提到切换内核页表后，由于没有进程trapframe的映射，存放trapframe地址的a0不再有用。那么为什么内核可以通过p -> trapframe访问trapframe呢？*
-*因为a0存的是trapframe在进程空间中的虚拟地址。而p -> trapframe存的是trapframe的物理地址。内核使用恒等映射，因此可以直接通过物理地址访问trapframe*
+*因为a0存的是trapframe在用户空间中的虚拟地址。而p -> trapframe存的是trapframe的物理地址。内核使用恒等映射，因此可以直接通过物理地址访问trapframe*
 
 
 
