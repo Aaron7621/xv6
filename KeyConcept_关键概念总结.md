@@ -1,4 +1,4 @@
-# Key concept conclusion| 核心概念总结
+#   Key concept conclusion| 核心概念总结
 
 This file concludes the key concepts in XV6 and operating system. It is important to be familiar with these concept before exploring in the source code in XV6.
 

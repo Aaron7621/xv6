@@ -586,7 +586,7 @@ sys_pipe()：接收用户空间传入的数组fdarray，最终将pipe的读写fi
 
 - struct logheader：log header结构，包含
   - n：已经提交但尚未转移完成的log block数量
-  - int block[]：记录了第i个log block里存的是哪个blockno对应的block的数据
+  - int block[]：记录了第i个log block里存的是哪个blockno对应的block的数据。**数组的元素是一个个普通block的blockno**
 - struct log：日志全局管理器结构。
   - lock：管理整个struct log的大锁
   - size：日志系统块总数
@@ -639,7 +639,7 @@ sys_pipe()：接收用户空间传入的数组fdarray，最终将pipe的读写fi
 
 - install_trans()：将log block的数据转移到其真正属于的block中。接收一个传入参数recovering
   - 根据log.lh.n的大小，依次读出数量n个log block的buf cache，lbuf
-  - 根据log.lh.block[i]，依次读出n个log block对应的block的blockno的buf cache，dbuf
+  - 根据log.lh.block[i]，依次读出n个log block对应block的buf cache，dbuf
   - 两buf cache进行memmove，然后dbuf落盘
   - 如果当前的install_trans不是因为crash之后的恢复所被调用（recovering = 0）的，则将dbuf unpin掉。此时dbuf可以被驱逐了。如果是recovering = 1，则不需要做这一步。因为crash完后的内存都清除了，不需要考虑buf cache的问题
 
