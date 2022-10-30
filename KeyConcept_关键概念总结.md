@@ -140,6 +140,8 @@ xv6中，把用户进程分成了“用户线程”和“内核线程”。
   在exit的过程中，进程唤醒自己的父进程，关闭自己的文件，把自己变为僵尸态，僵尸态中的进程之后不可能再被调度，离死去只剩一步之遥。最后调用sched切出当前进程。之后被唤醒的父进程真正把僵尸态的进程杀死，释放所有内存，变为UNUSED态
 - UNUSED：空闲进程，可随时被分配/重用。
 
+
+
 ## Condition Lock 条件锁
 
 条件锁是进程sleep-wakeup机制中，保护sleep前判断条件的一个锁。
@@ -171,7 +173,7 @@ sleep调用本应该是不需要直到其被调用的原因的，但是因为在
 
 因此，要保证sleep-wakeup机制不会产生lost wakup，必须要把保护sleep所等待的条件（即sleep的原因）的锁作为参数传到sleep中（尽管从逻辑上sleep似乎并不需要知道进程为什么sleep），以原子化地执行完判断sleep条件->进程进入sleep->成功sleep之后释放锁的过程。
 
-另一方面，sleep一般需要包裹在一个while循环中，循环的退出条件就是sleep condition。同时sleep一旦被唤醒应立即获得锁。这是因为：可能有多个线程sleep在了同一个condition上，而一次wakeup所提供的信号量（例如现在缓冲区只是空闲了一个字节而已），只允许一个sleep的线程被唤醒并执行。循环+被唤醒后获得锁的操作，能保证其他没有争夺到condition lock的线程继续sleep。
+另一方面，sleep一般需要包裹在一个while循环中，循环的退出条件就是sleep condition。同时sleep一旦被唤醒应立即获得锁。 这是因为：可能有多个线程sleep在了同一个condition上，而一次wakeup所提供的信号量（例如现在缓冲区只是空闲了一个字节而已），只允许一个sleep的线程被唤醒并执行。循环+被唤醒后获得锁的操作，能保证其他没有争夺到condition lock的线程继续sleep。
 
 所以，在xv6和Unix中的sleep原语，都需要传入一把条件锁：
 
